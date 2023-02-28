@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Data Files
+*.csv
+
+# This project
+_Notebooks
+_scripts_/*
