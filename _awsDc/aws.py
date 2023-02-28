@@ -13,7 +13,7 @@ class S3:
         path: str) -> list:
         """Similar to os.listdir() pyhton method but working with S3
 
-        Parameters
+        Parameterssss
         ----------
         path : str
 
