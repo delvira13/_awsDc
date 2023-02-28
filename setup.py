@@ -14,7 +14,6 @@ setup(
     name='awsDc',
     version='0.0.2',
     url='https://github.com/delvira13/_awsDc',
-    scripts=[],
     packages=['_awsDc'],
     install_requires=requires,
     license='LICENSE.txt',
