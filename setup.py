@@ -11,11 +11,11 @@ requires = [
 ]
 
 setup(
-    name='awsDc',
-    version='0.0.2',
-    url='https://github.com/delvira13/_awsDc',
-    packages=['_awsDc'],
+    name='awsUtils',
+    version='0.0.1',
+    url='https://github.com/delvira13/_awsUtils',
+    packages=['awsUtils'],
     install_requires=requires,
     license='LICENSE.txt',
-    python_requires=">= 3.7"
+    python_requires=">= 3.10"
 )
