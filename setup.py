@@ -11,7 +11,7 @@ requires = [
 ]
 
 setup(
-    name='awsUtils',
+    name='de-awsUtils',
     version='0.0.1',
     url='https://github.com/delvira13/_awsUtils',
     packages=['awsUtils'],
