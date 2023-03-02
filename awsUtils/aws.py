@@ -2,6 +2,7 @@ import boto3
 import pandas as pd
 from io import BytesIO
 import os
+from awsUtils.functions import splitS3Path
 
 class S3:
     
@@ -22,12 +23,31 @@ class S3:
         list
             List of objects in path
         """
-        list_dir = path.replace('s3://', '').split('/')
-        Bucket, Key = list_dir[0], '/'.join(list_dir[1:])
+        Bucket, Key = splitS3Path(path)
         
         objects = [object.key.split('/')[-1] for object in self.s3.Bucket(Bucket).objects.filter(Prefix=Key)]
                 
         return objects
+    
+    def upload(
+        self, 
+        localPath: str,
+        s3Path: str,
+        recursive: bool = False): 
+        
+        filename = localPath.split('/')[-1]
+        Bucket, Key = splitS3Path(s3Path)
+        
+        if recursive:
+            localPath = localPath if localPath.endswith('/') else localPath+'/'
+            
+            for root, directories, files in os.walk(localPath):
+                for file in files:
+                    self.s3.Object(Bucket, os.path.join(Key, root.replace(localPath, ''), file))\
+                        .upload_file(os.path.join(root, file))
+        else:
+            self.s3.Object(Bucket, os.path.join(Key, filename)).upload_file(localPath)
+        
     
     def read_data(
         self,
@@ -42,9 +62,7 @@ class S3:
         -------
         pd.DataFrame
         """
-        path_list = path.replace('s3://', '').split('/')
-        Bucket = path_list[0]
-        Key = '/'.join(path_list[1:])
+        Bucket, Key = splitS3Path(path)
         
         if path.endswith('.parquet'):
             data = pd.read_parquet(
@@ -115,13 +133,14 @@ class Athena:
                 raise Exception('Query Cancelled! Query ID:', execution['QueryExecutionId'])
                 
             elif status == 'FAILED':
-                raise Exception('Query Failed! Query ID:', execution['QueryExecutionId'])
                 
-        location = execution_status['QueryExecution']['ResultConfiguration']['OutputLocation']\
-            .replace('s3://', '').split('/')
-            
-        Bucket = location[0]
-        Key = '/'.join(location[1:]) 
+                msg = 'Query Failed! Query ID: ' + execution['QueryExecutionId']+'\n'+\
+                      ' Error Message: '+execution_status['QueryExecution']['Status']['AthenaError']['ErrorMessage']
+                
+                raise Exception(msg)
+
+        Bucket, Key = splitS3Path(execution_status['QueryExecution']['ResultConfiguration']['OutputLocation'])
+        
         data = pd.read_csv(
             self.s3.get_object(Bucket=Bucket, Key=Key)['Body'])
         
