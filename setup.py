@@ -3,7 +3,7 @@
 """
 distutils/setuptools install script.
 """
-from setuptools import setup
+from distutils.core import setup
 
 requires = [
     'boto3>=1.26.63',
@@ -12,7 +12,7 @@ requires = [
 
 setup(
     name='de-awsUtils',
-    version='0.0.2',
+    version='0.0.3',
     url='https://github.com/delvira13/_awsUtils',
     packages=['awsUtils'],
     install_requires=requires,
