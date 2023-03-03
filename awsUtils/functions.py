@@ -4,4 +4,4 @@ def splitS3Path(
     Bucket = s3Path_list[0]
     Key = '/'.join(s3Path_list[1:])
     
-    return Bucket, Key 
+    return Bucket, Key
