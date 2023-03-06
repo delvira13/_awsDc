@@ -3,7 +3,7 @@
 """
 distutils/setuptools install script.
 """
-from distutils.core import setup
+from setuptools import setup
 
 requires = [
     'boto3>=1.26.63',
