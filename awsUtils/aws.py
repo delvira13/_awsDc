@@ -3,7 +3,6 @@ import pandas as pd
 from io import BytesIO
 import os
 from awsUtils.functions import splitS3Path
-import time
 
 class S3:
     
@@ -89,7 +88,8 @@ class Athena:
         DataBase: str,
         Catalog: str,
         QueryString: str = None,
-        QueryPath: str = None) -> pd.DataFrame:
+        QueryPath: str = None,
+        Quiet: bool = True) -> pd.DataFrame:
         """Query AWS Athena and return Pandas DataFrame
 
         Parameters
@@ -121,19 +121,20 @@ class Athena:
                 'Catalog': Catalog,
                 'Database': DataBase})
         
-        start_time = time.time()
-        
         
         status = self.athena.get_query_execution(QueryExecutionId=execution['QueryExecutionId'])['QueryExecution']['Status']['State']
-        print('Running Query. Query ID:', execution['QueryExecutionId'])
+        
+        if not Quiet:
+            print('Running Query. Query ID:', execution['QueryExecutionId'])
+        
         while status in ['QUEUED', 'RUNNING']:
             execution_status = self.athena.get_query_execution(QueryExecutionId=execution['QueryExecutionId'])
             status = execution_status['QueryExecution']['Status']['State']
             
-            if status == 'SUCCEEDED':
-                print('Query Succeeded! Query ID:\n', 
-                      'Running time: ', time-time()-start_time, 'seconds \n',
-                      execution['QueryExecutionId'])
+            if status == 'SUCCEEDED' and not Quiet:
+                QueryExecTime = execution_status['QueryExecution']['Statistics']['TotalExecutionTimeInMillis']/1000
+                print('Query Succeeded!'
+                      '\nAthena Running time: ', round(QueryExecTime, 3), 'seconds \n')
                     
             elif status == 'CANCELLED':
                 raise Exception('Query Cancelled! Query ID:', execution['QueryExecutionId'])
