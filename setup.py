@@ -12,7 +12,7 @@ requires = [
 
 setup(
     name='de-awsUtils',
-    version='0.0.3',
+    version='0.0.4',
     url='https://github.com/delvira13/_awsUtils',
     packages=['awsUtils'],
     install_requires=requires,

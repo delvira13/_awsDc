@@ -3,6 +3,7 @@ import pandas as pd
 from io import BytesIO
 import os
 from awsUtils.functions import splitS3Path
+import time
 
 class S3:
     
@@ -120,6 +121,9 @@ class Athena:
                 'Catalog': Catalog,
                 'Database': DataBase})
         
+        start_time = time.time()
+        
+        
         status = self.athena.get_query_execution(QueryExecutionId=execution['QueryExecutionId'])['QueryExecution']['Status']['State']
         print('Running Query. Query ID:', execution['QueryExecutionId'])
         while status in ['QUEUED', 'RUNNING']:
@@ -127,7 +131,9 @@ class Athena:
             status = execution_status['QueryExecution']['Status']['State']
             
             if status == 'SUCCEEDED':
-                print('Query Succeeded! Query ID:', execution['QueryExecutionId'])
+                print('Query Succeeded! Query ID:\n', 
+                      'Running time: ', time-time()-start_time, 'seconds \n',
+                      execution['QueryExecutionId'])
                     
             elif status == 'CANCELLED':
                 raise Exception('Query Cancelled! Query ID:', execution['QueryExecutionId'])
