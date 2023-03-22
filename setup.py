@@ -6,8 +6,8 @@ distutils/setuptools install script.
 from setuptools import setup
 
 requires = [
-    'boto3>=1.26.63',
-    'pandas>=1.5.3'
+    'boto3',
+    'pandas'
 ]
 
 setup(
@@ -17,5 +17,5 @@ setup(
     packages=['awsUtils'],
     install_requires=requires,
     license='LICENSE.txt',
-    python_requires=">= 3.10"
+    python_requires=">= 3.7"
 )
